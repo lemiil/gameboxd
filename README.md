@@ -32,8 +32,8 @@
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/your-username/gameboxed.git
-cd gameboxed
+git clone https://github.com/lemiil/gameboxd.git
+cd gameboxd
 ```
 
 2. Set up the env. file
