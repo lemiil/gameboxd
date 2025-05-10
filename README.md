@@ -10,7 +10,6 @@
 - Frontend: Vue + Inertia
 - Database: PostgreSQL
 - Cache: Redis
-- Message Broker: Kafka
 - API: REST
 - Auth: OAuth
 
