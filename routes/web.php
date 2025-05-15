@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
+use App\Http\Controllers\RedisTestController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
+Route::get('/redisyeah', [RedisTestController::class, 'heyrediswhatsup']);
 
 Route::get('/', function () {
     return Inertia::render('Main', [
