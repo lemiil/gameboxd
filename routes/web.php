@@ -1,11 +1,11 @@
 <?php
 
+use App\Http\Controllers\JustForFunController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\RedisTestController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/redisyeah', [RedisTestController::class, 'heyrediswhatsup']);
+Route::get('/yeah', [JustForFunController::class, 'whatsup']);
 
 Route::get('/', function () {
     return Inertia::render('Main', [
