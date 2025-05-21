@@ -17,7 +17,7 @@ return [
      *
      * To turn cache off set this value to 0.
      */
-    'cache_lifetime' => env('IGDB_CACHE_LIFETIME', 3600),
+    'cache_lifetime' => intval(env('IGDB_CACHE_LIFETIME', 3600)),
 
     /**
      * The prefix used to cache the results.
