@@ -5,7 +5,11 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/yeah', [JustForFunController::class, 'whatsup']);
+// Route::get('/yeah', [JustForFunController::class, 'whatsup']);
+
+Route::get('/yeah', function () {
+    return '1';
+});
 
 Route::get('/', function () {
     return Inertia::render('Main', [
