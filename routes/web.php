@@ -4,8 +4,15 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use MarcReichel\IGDBLaravel\Models\Game;
 
-Route::get('/', function () {
+Route::get('/', function() {
+    $game = Game::with(['artworks' => ['url', 'image_id']])->where('name', 'Hollow Knight')->first();
+
+    dd($game);
+});
+
+Route::get('/welcome', function () {
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
