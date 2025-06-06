@@ -12,6 +12,8 @@ use App\Models\Theme;
 use App\Models\Screenshot;
 use Carbon\Carbon;
 
+
+//TODO need to add rate limit, because api is baka. also need somehow managed games that already imported, and, of course, some fixes... i love my work
 class ImportIgdbGames extends Command
 {
     protected $signature = 'igdb:import {limit=50}';
