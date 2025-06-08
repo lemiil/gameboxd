@@ -19,30 +19,48 @@ class ImportIgdbGames extends Command
     public function handle()
     {
         $limit = (int) $this->argument('limit');
+        $perPage = 500;
+        $imported = 0;
+
+        $startTime = microtime(true);
 
         $this->info("Importing $limit games from IGDB");
 
-        $igdbGames = IGDBGame::with([
-            'cover',
-            'screenshots',
-            'platforms',
-            'genres',
-            'themes',
-            'involved_companies.company',
-        ])
-            ->limit($limit)
-            ->get();
+        while ($imported < $limit) {
+            $batchSize = min($perPage, $limit - $imported);
 
-        foreach ($igdbGames as $igdbGame) {
-            $this->importGame($igdbGame);
+            $igdbGames = IGDBGame::with([
+                'cover',
+                'screenshots',
+                'platforms',
+                'genres',
+                'themes',
+                'involved_companies.company',
+            ])
+                ->limit($batchSize)
+                ->offset($imported)
+                ->get();
 
-            // igdb rate limit is 4 request per second
-            usleep(250_000);
+            if ($igdbGames->isEmpty()) {
+                $this->warn("No more games returned from IGDB. Stopping early.");
+                break;
+            }
+
+            foreach ($igdbGames as $igdbGame) {
+                $this->importGame($igdbGame);
+            }
+
+            $imported += $igdbGames->count();
         }
 
-        $this->info("Importing is done!!");
+
+        $endTime = microtime(true);
+        $executionTime = floor(($endTime - $startTime) * 100) / 100;
+
+        $this->info("Importing is done!! Total imported: $imported in $executionTime seconds");
         return 0;
     }
+
 
     protected function importGame($igdbGame)
     {
