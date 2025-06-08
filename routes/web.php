@@ -7,7 +7,7 @@ use Inertia\Inertia;
 use MarcReichel\IGDBLaravel\Models\Game;
 
 Route::get('/', function() {
-    $game = Game::with(['artworks' => ['url', 'image_id']])->where('name', 'Hollow Knight')->first();
+    $game = Game::where('name', 'The Undying Beast')->first();
 
     dd($game);
 });
