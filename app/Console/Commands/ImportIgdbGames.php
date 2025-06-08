@@ -11,8 +11,6 @@ use App\Models\Genre;
 use App\Models\Theme;
 use App\Models\Screenshot;
 
-
-//TODO need to add rate limit, because api is baka. also need somehow managed games that already imported, and, of course, some fixes... i love my work
 class ImportIgdbGames extends Command
 {
     protected $signature = 'igdb:import {limit=50}';
@@ -37,6 +35,9 @@ class ImportIgdbGames extends Command
 
         foreach ($igdbGames as $igdbGame) {
             $this->importGame($igdbGame);
+
+            // igdb rate limit is 4 request per second
+            usleep(250_000);
         }
 
         $this->info("Importing is done!!");
