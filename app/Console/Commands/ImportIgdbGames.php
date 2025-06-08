@@ -42,7 +42,7 @@ class ImportIgdbGames extends Command
                 ->get();
 
             if ($igdbGames->isEmpty()) {
-                $this->warn("No more games returned from IGDB. Stopping early.");
+                $this->warn("No more games!");
                 break;
             }
 
