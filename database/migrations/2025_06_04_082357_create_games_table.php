@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('name');
             $table->date('release_date')->nullable();
             $table->string('cover_url')->nullable();
-            $table->string('artwork_url')->nullable();
             $table->text('summary')->nullable();
             $table->timestamps();
         });
