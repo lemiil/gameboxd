@@ -10,14 +10,13 @@ use App\Models\Platform;
 use App\Models\Genre;
 use App\Models\Theme;
 use App\Models\Screenshot;
-use Carbon\Carbon;
 
 
 //TODO need to add rate limit, because api is baka. also need somehow managed games that already imported, and, of course, some fixes... i love my work
 class ImportIgdbGames extends Command
 {
     protected $signature = 'igdb:import {limit=50}';
-    protected $description = 'Import games from IGDB using marcreichel/igdb-laravel';
+    protected $description = 'Import games from IGDB';
 
     public function handle()
     {
@@ -27,7 +26,6 @@ class ImportIgdbGames extends Command
 
         $igdbGames = IGDBGame::with([
             'cover',
-            'artworks',
             'screenshots',
             'platforms',
             'genres',
@@ -48,15 +46,15 @@ class ImportIgdbGames extends Command
     protected function importGame($igdbGame)
     {
         $releaseDate = $igdbGame->first_release_date
-            ? Carbon::createFromTimestamp($igdbGame->first_release_date)->toDateString()
+            ? $igdbGame->first_release_date->toArray()['formatted']
             : null;
 
         $game = Game::updateOrCreate(
             ['name' => $igdbGame->name],
             [
+                'summary' => $igdbGame->summary,
                 'release_date' => $releaseDate,
                 'cover_url' => optional($igdbGame->cover)['url'],
-                'artwork_url' => isset($igdbGame->artworks[0]['url']) ? $igdbGame->artworks[0]['url'] : null,
             ]
         );
 
