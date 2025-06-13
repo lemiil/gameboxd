@@ -43,7 +43,7 @@ onMounted(() => {
                     <!-- theme changer -->
                     <button
                         @click="toggleTheme"
-                        class="text-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 rounded transition"
+                        class="text-xl focus:outline-none rounded transition"
                         :aria-label="theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
                         :title="theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
                     >
@@ -80,7 +80,6 @@ onMounted(() => {
             <p class="text-lg text-gray-600 dark:text-gray-400 mb-6">
                 Blah blah blah...
             </p>
-            <span class="text-sm text-gray-500 dark:text-gray-400">Current theme: {{ theme }}</span>
         </main>
 
         <!-- footer -->
