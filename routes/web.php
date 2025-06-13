@@ -6,18 +6,10 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use MarcReichel\IGDBLaravel\Models\Game;
 
-Route::get('/', function() {
-    $game = Game::where('name', 'The Undying Beast')->first();
-
-    dd($game);
-});
-
-Route::get('/welcome', function () {
-    return Inertia::render('Welcome', [
+Route::get('/', function () {
+    return Inertia::render('Main', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
     ]);
 });
 
@@ -31,4 +23,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+/////
+
 require __DIR__.'/auth.php';
+
+/////
+
+Route::get('/test', function() {
+    $game = Game::where('name', 'The Undying Beast')->first();
+
+    dd($game);
+});
