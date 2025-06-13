@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Game\GameController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/games/{slug}', [GameController::class, 'show'])->name('game.show');
+
 /////
 
 require __DIR__.'/auth.php';
@@ -30,7 +33,7 @@ require __DIR__.'/auth.php';
 /////
 
 Route::get('/test', function() {
-    $game = Game::where('name', 'The Undying Beast')->first();
+    $game = Game::where('name', 'Nightmare Kart: The Old Karts')->first();
 
     dd($game);
 });
