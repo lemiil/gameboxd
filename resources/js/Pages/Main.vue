@@ -1,6 +1,6 @@
 <script setup>
-import {Head, Link} from '@inertiajs/vue3';
-import {onMounted, ref} from 'vue';
+import { Head, Link } from '@inertiajs/vue3';
+import { onMounted, ref } from 'vue';
 
 defineProps({
     canLogin: Boolean,
@@ -8,8 +8,6 @@ defineProps({
 });
 
 const theme = ref('light');
-
-const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
 
 const toggleTheme = () => {
     theme.value = theme.value === 'light' ? 'dark' : 'light';
@@ -19,16 +17,18 @@ const toggleTheme = () => {
 
 onMounted(() => {
     const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
+    const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+
+    if (savedTheme) {
+        theme.value = savedTheme;
+    } else if (darkThemeMq.matches) {
         theme.value = 'dark';
-        document.documentElement.classList.add('dark');
     }
-    if (darkThemeMq.matches) {
-        theme.value = 'dark';
-        document.documentElement.classList.add('dark');
-    }
+
+    document.documentElement.classList.toggle('dark', theme.value === 'dark');
 });
 </script>
+
 
 <template>
     <Head title="Main"/>
