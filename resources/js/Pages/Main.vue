@@ -9,6 +9,8 @@ defineProps({
 
 const theme = ref('light');
 
+const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+
 const toggleTheme = () => {
     theme.value = theme.value === 'light' ? 'dark' : 'light';
     document.documentElement.classList.toggle('dark', theme.value === 'dark');
@@ -18,6 +20,10 @@ const toggleTheme = () => {
 onMounted(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
+        theme.value = 'dark';
+        document.documentElement.classList.add('dark');
+    }
+    if (darkThemeMq.matches) {
         theme.value = 'dark';
         document.documentElement.classList.add('dark');
     }
