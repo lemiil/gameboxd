@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Game extends Model
 {
 
-    protected $fillable = ['name', 'release_date', 'cover_url', 'artwork_url', 'summary'];
+    protected $fillable = ['name', 'slug', 'release_date', 'cover_url', 'artwork_url', 'summary'];
 
     public function companies() {
         return $this->belongsToMany(Company::class);

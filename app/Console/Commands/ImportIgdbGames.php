@@ -41,6 +41,7 @@ class ImportIgdbGames extends Command
                 ->offset($imported)
                 ->get();
 
+
             if ($igdbGames->isEmpty()) {
                 $this->warn("No more games!");
                 break;
@@ -69,13 +70,15 @@ class ImportIgdbGames extends Command
             : null;
 
         $game = Game::updateOrCreate(
-            ['name' => $igdbGame->name],
             [
+                'name' => $igdbGame->name,
+                'slug' => $igdbGame->slug,
                 'summary' => $igdbGame->summary,
                 'release_date' => $releaseDate,
                 'cover_url' => optional($igdbGame->cover)['url'],
             ]
         );
+
 
         if ($igdbGame->involved_companies) {
             $companyIds = collect($igdbGame->involved_companies)
