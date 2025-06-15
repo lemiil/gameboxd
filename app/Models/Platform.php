@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Platform extends Model
 {
+    protected $hidden = ['pivot'];
     protected $fillable = ['name'];
 
     public function games() {
