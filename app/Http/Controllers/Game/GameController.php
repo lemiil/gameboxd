@@ -12,11 +12,18 @@ class GameController extends Controller
 {
     public function show(Request $request)
     {
-        $game = Game::where('slug', $request->slug)->firstOrFail();
+        $game = Game::with([
+            'genres:name',
+            'companies:name',
+            'platforms:name',
+            'screenshots',
+            'themes:name',
+        ])->where('slug', $request->slug)->firstOrFail();
 
         return Inertia::render('Game/Game', [
             'game' => $game,
         ]);
     }
+
 
 }
