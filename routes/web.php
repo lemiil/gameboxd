@@ -8,10 +8,7 @@ use Inertia\Inertia;
 use MarcReichel\IGDBLaravel\Models\Game;
 
 Route::get('/', function () {
-    return Inertia::render('Main', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-    ]);
+    return Inertia::render('Main');
 });
 
 Route::get('/dashboard', function () {
