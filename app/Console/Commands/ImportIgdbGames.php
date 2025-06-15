@@ -13,7 +13,7 @@ use App\Models\Screenshot;
 
 class ImportIgdbGames extends Command
 {
-    protected $signature = 'igdb:import {limit=50}';
+    protected $signature = 'igdb:import {limit=500}';
     protected $description = 'Import games from IGDB';
 
     public function handle()
@@ -69,13 +69,18 @@ class ImportIgdbGames extends Command
             ? $igdbGame->first_release_date->toArray()['formatted']
             : null;
 
+        $coverUrl = optional($igdbGame->cover)['url'];
+        if ($coverUrl) {
+            $coverUrl = str_replace('t_thumb', 't_cover_big_2x', "$coverUrl");
+        }
+
         $game = Game::updateOrCreate(
             [
                 'name' => $igdbGame->name,
                 'slug' => $igdbGame->slug,
                 'summary' => $igdbGame->summary,
                 'release_date' => $releaseDate,
-                'cover_url' => optional($igdbGame->cover)['url'],
+                'cover_url' => $coverUrl,
             ]
         );
 
