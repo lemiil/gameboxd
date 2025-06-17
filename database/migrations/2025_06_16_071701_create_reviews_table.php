@@ -16,8 +16,10 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('game_id')->constrained()->onDelete('cascade');
             $table->foreignId('platform_id')->nullable()->constrained()->onDelete('set null');
+            $table->text('text')->nullable();
             $table->tinyInteger('rating')->unsigned()->nullable();
             $table->enum('status', ['planned', 'played', 'dropped', 'completed', 'shelved']);
+            $table->boolean('liked')->default(false);
             $table->unique(['user_id', 'game_id']);
             $table->timestamps();
         });
