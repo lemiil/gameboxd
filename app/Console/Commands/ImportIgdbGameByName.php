@@ -99,13 +99,14 @@ class ImportIgdbGameByName extends Command
 
         if ($igdbGame->screenshots) {
             foreach ($igdbGame->screenshots as $shot) {
+                $url = $shot['url'];
+                $url = str_replace('t_thumb', 't_720p', "$url");
                 Screenshot::updateOrCreate([
                     'game_id' => $game->id,
-                    'url' => $shot['url'],
+                    'url' => $url,
                 ]);
             }
         }
 
-        $this->info("Imported: {$game->name}");
     }
 }
