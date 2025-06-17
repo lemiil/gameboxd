@@ -16,13 +16,15 @@ defineProps({
             <h1 class="text-3xl font-bold mb-4">{{ game.name }}</h1>
 
             <div class="flex flex-col md:flex-row gap-6">
-                <div class="md:w-1/4 flex justify-center">
+                <div class="flex justify-center">
                     <img
                         :src="game.cover_url.startsWith('//') ? 'https:' + game.cover_url : game.cover_url"
                         :alt="game.name + ' Cover'"
-                        class="w-48 h-auto object-cover border-2 border-gray-700 rounded"
+                        class="w-40 sm:w-48 md:w-56 h-auto border-2 border-gray-700 rounded"
                     />
                 </div>
+
+
 
                 <div class="md:flex-1 space-y-4">
                     <p v-if="game.release_date" class="text-gray-600">
