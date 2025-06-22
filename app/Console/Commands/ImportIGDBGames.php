@@ -2,12 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Services\IGDB\IGDBGameImporter;
 use Illuminate\Console\Command;
 use MarcReichel\IGDBLaravel\Models\Game as IGDBGame;
 
-use App\Services\IgdbGameImporter;
-
-class ImportIgdbGames extends Command
+class ImportIGDBGames extends Command
 {
     protected $signature = 'igdb:import {limit=500}';
     protected $description = 'Import games from IGDB';
