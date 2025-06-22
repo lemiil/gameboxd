@@ -32,14 +32,15 @@ class IGDBGameImporter
 
 
         $game = Game::updateOrCreate(
+            ['slug' => $igdbGame->slug],
             [
                 'name' => $name,
-                'slug' => $igdbGame->slug,
                 'summary' => $igdbGame->summary,
                 'release_date' => $releaseDate,
                 'cover_url' => $coverUrl,
             ]
         );
+
 
         if ($igdbGame->involved_companies) {
             $companyIds = collect($igdbGame->involved_companies)
