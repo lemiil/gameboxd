@@ -1,12 +1,12 @@
 <?php
 
-use App\Models\Game;
-use App\Models\Platform;
-use App\Models\Genre;
 use App\Models\Company;
-use App\Models\Theme;
+use App\Models\Game;
+use App\Models\Genre;
+use App\Models\Platform;
 use App\Models\Screenshot;
-use App\Services\IgdbGameImporter;
+use App\Models\Theme;
+use App\Services\IGDB\IgdbGameImporter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
