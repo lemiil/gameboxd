@@ -20,8 +20,17 @@ class GameController extends Controller
             'themes:name',
         ])->where('slug', $request->slug)->firstOrFail();
 
-        return Inertia::render('Game/Game', [
+        return Inertia::render('Game/GameShow', [
             'game' => $game,
+        ]);
+    }
+
+    public function index(Request $request)
+    {
+        $games = Game::paginate(15);
+
+        return Inertia::render('Game/GameIndex', [
+            'games' => $games,
         ]);
     }
 
