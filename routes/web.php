@@ -21,7 +21,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/games/lib', [GameController::class, 'index'])->name('game.index');
+Route::get('/games', [GameController::class, 'index'])->name('game.index');
 Route::get('/games/{slug}', [GameController::class, 'show'])->name('game.show');
 
 
