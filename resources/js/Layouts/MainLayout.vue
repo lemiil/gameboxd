@@ -90,7 +90,7 @@ onMounted(() => {
         </header>
 
         <!-- main -->
-        <main class="flex-1 max-w-4xl mx-auto px-4 py-10">
+        <main class="flex-1 max-w-6xl mx-auto px-4 py-10">
             <slot />
         </main>
 
