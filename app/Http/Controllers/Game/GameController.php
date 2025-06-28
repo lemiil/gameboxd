@@ -27,7 +27,9 @@ class GameController extends Controller
 
     public function index(Request $request)
     {
-        $games = Game::paginate(15);
+        $games = Game::select('id', 'name', 'slug', 'cover_url')
+            ->paginate(30)
+            ->withQueryString();
 
         return Inertia::render('Game/GameIndex', [
             'games' => $games,

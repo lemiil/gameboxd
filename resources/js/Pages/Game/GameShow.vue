@@ -20,7 +20,7 @@ defineProps({
                     <img
                         :src="game.cover_url.startsWith('//') ? 'https:' + game.cover_url : game.cover_url"
                         :alt="game.name + ' Cover'"
-                        class="w-40 sm:w-48 md:w-56 h-auto border-2 border-gray-700 rounded"
+                        class="h-60 w-full border-2 border-gray-700 rounded"
                     />
                 </div>
 
