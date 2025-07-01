@@ -4,6 +4,9 @@ import { Link } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
 import Main from "@/Pages/Main.vue";
 
+import { usePage } from '@inertiajs/vue3'
+const page = usePage()
+
 const theme = ref('light');
 
 const toggleTheme = () => {
@@ -90,9 +93,11 @@ onMounted(() => {
         </header>
 
         <!-- main -->
-        <main class="flex-1 max-w-6xl mx-auto px-4 py-10">
+
+        <main v-if="page.component !== 'Game/GameShow'" class="flex-1 max-w-6xl mx-auto px-4 py-10">
             <slot />
         </main>
+        <slot v-else />
 
         <!-- footer -->
         <footer class="bg-gray-100 dark:bg-gray-800 py-6 mt-auto shadow-inner">

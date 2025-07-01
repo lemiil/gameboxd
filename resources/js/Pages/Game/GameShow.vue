@@ -12,73 +12,106 @@ defineProps({
 <template>
     <Head :title="game.name" />
     <MainLayout>
-        <div class="max-w-5xl mx-auto p-4">
-            <h1 class="text-3xl font-bold mb-4">{{ game.name }}</h1>
+        <div class="relative">
 
-            <div class="flex flex-col md:flex-row gap-6">
-                <div class="flex justify-center">
-                    <img
-                        :src="game.cover_url.startsWith('//') ? 'https:' + game.cover_url : game.cover_url"
-                        :alt="game.name + ' Cover'"
-                        class="h-60 w-full border-2 border-gray-700 rounded"
-                    />
+            <div
+                v-if="game.screenshots?.[0]?.url"
+                class="absolute top-0 left-0 w-full h-[50vh] bg-cover bg-center blur-xl opacity-30 z-0"
+                :style="{
+        backgroundImage: `url(${game.screenshots[0].url.startsWith('//') ? 'https:' + game.screenshots[0].url : game.screenshots[0].url})`,
+    }"
+            ></div>
+
+            <div class="absolute top-0 left-0 w-full h-[50vh] bg-gradient-to-b from-black/60 to-transparent z-10"></div>
+
+            <div class="relative z-20 max-w-5xl mx-auto p-4">
+                <div class="flex flex-col mt-20 md:flex-row gap-6">
+
+                    <div class="flex justify-center">
+                        <img
+                            v-if="game.cover_url"
+                            :src="game.cover_url.startsWith('//') ? 'https:' + game.cover_url : game.cover_url"
+                            :alt="`${game.name} Cover`"
+                            class="h-60 w-full border-2 border-gray-700 rounded object-cover"
+                        />
+                        <div
+                            v-else
+                            class="h-60 w-full flex items-center justify-center border-2 border-dashed border-gray-700 rounded bg-gray-800 text-gray-400 text-center"
+                        >
+                            No cover available
+                        </div>
+                    </div>
+
+                    <div class="md:flex-1 space-y-4">
+                        <h1 class="text-3xl font-bold mb-4">{{ game.name }}</h1>
+
+                        <h2 class="text-2xl">
+                            <strong>Release date:</strong>
+                            {{ game.release_date ? new Date(game.release_date).toLocaleDateString() : 'TBD' }}
+                        </h2>
+
+                        <p>{{ game.summary }}</p>
+
+                        <div v-if="game.genres?.length">
+                            <strong>Genres:</strong>
+                            <span
+                                v-for="(genre, index) in game.genres"
+                                :key="genre.id || index"
+                                class="mr-2"
+                            >
+                                {{ genre.name }}<span v-if="index < game.genres.length - 1">,</span>
+                            </span>
+                        </div>
+
+                        <div v-if="game.themes?.length">
+                            <strong>Themes:</strong>
+                            <span
+                                v-for="(theme, index) in game.themes"
+                                :key="theme.id || index"
+                                class="mr-2"
+                            >
+                                {{ theme.name }}<span v-if="index < game.themes.length - 1">,</span>
+                            </span>
+                        </div>
+
+                        <div v-if="game.platforms?.length">
+                            <strong>Platforms:</strong>
+                            <span
+                                v-for="(platform, index) in game.platforms"
+                                :key="platform.id || index"
+                                class="mr-2"
+                            >
+                                {{ platform.name }}<span v-if="index < game.platforms.length - 1">,</span>
+                            </span>
+                        </div>
+
+                        <div v-if="game.companies?.length">
+                            <strong>Companies:</strong>
+                            <span
+                                v-for="(company, index) in game.companies"
+                                :key="company.id || index"
+                                class="mr-2"
+                            >
+                                {{ company.name }}<span v-if="index < game.companies.length - 1">,</span>
+                            </span>
+                        </div>
+                    </div>
                 </div>
 
-
-
-                <div class="md:flex-1 space-y-4">
-                    <p v-if="game.release_date" class="text-gray-600">
-                        <strong>Release date:</strong> {{ new Date(game.release_date).toLocaleDateString() }}
-                    </p>
-                    <p v-else class="text-gray-600 italic">Release date: TBD</p>
-
-                    <p>{{ game.summary }}</p>
-
-                    <div>
-                        <strong>Genres:</strong>
-                        <span v-for="(genre, index) in game.genres" :key="index" class="mr-2">
-                            {{ genre.name }}<span v-if="index < game.genres.length - 1">,</span>
-                        </span>
+                <div class="mt-8">
+                    <h2 class="text-2xl font-semibold mb-4">Screenshots</h2>
+                    <div v-if="game.screenshots?.length" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+                        <img
+                            v-for="screenshot in game.screenshots"
+                            :key="screenshot.id"
+                            :src="screenshot.url.startsWith('//') ? 'https:' + screenshot.url : screenshot.url"
+                            :alt="`Screenshot ${screenshot.id} of ${game.name}`"
+                            class="w-full h-auto rounded border border-gray-300 object-cover"
+                        />
                     </div>
-
-                    <div>
-                        <strong>Themes:</strong>
-                        <span v-for="(theme, index) in game.themes" :key="index" class="mr-2">
-                            {{ theme.name }}<span v-if="index < game.themes.length - 1">,</span>
-                        </span>
-                    </div>
-
-                    <div>
-                        <strong>Platforms:</strong>
-                        <span v-for="(platform, index) in game.platforms" :key="index" class="mr-2">
-                            {{ platform.name }}<span v-if="index < game.platforms.length - 1">,</span>
-                        </span>
-                    </div>
-
-                    <div>
-                        <strong>Companies:</strong>
-                        <span v-for="(company, index) in game.companies" :key="index" class="mr-2">
-                            {{ company.name }}<span v-if="index < game.companies.length - 1">,</span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <div v-if="game.screenshots && game.screenshots.length" class="mt-8">
-                <h2 class="text-2xl font-semibold mb-4">Screenshots</h2>
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-                    <img
-                        v-for="screenshot in game.screenshots"
-                        :key="screenshot.id"
-                        :src="screenshot.url.startsWith('//') ? 'https:' + screenshot.url : screenshot.url"
-                        :alt="`Screenshot ${screenshot.id} of ${game.name}`"
-                        class="w-full h-auto rounded border border-gray-300 object-cover"
-                    />
+                    <p v-else class="italic text-gray-400">No screenshots available.</p>
                 </div>
             </div>
         </div>
     </MainLayout>
 </template>
-
-<style scoped>
-</style>
