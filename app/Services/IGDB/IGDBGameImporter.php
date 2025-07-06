@@ -22,19 +22,13 @@ class IGDBGameImporter
             $coverUrl = str_replace('t_thumb', 't_cover_big_2x', $coverUrl);
         }
 
-        if ($releaseDate) {
-            $year = $igdbGame->first_release_date->format('Y');
-            $name = $igdbGame->name . " ($year)";
-        }
-        else {
-            $name = $igdbGame->name . " (TBD)";
-        }
+
 
 
         $game = Game::updateOrCreate(
             ['slug' => $igdbGame->slug],
             [
-                'name' => $name,
+                'name' => $igdbGame->name,
                 'summary' => $igdbGame->summary,
                 'release_date' => $releaseDate,
                 'cover_url' => $coverUrl,
