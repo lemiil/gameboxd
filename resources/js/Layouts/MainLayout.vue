@@ -9,22 +9,8 @@ const page = usePage()
 
 const theme = ref('light');
 
-const toggleTheme = () => {
-    theme.value = theme.value === 'light' ? 'dark' : 'light';
-    document.documentElement.classList.toggle('dark', theme.value === 'dark');
-    localStorage.setItem('theme', theme.value);
-};
-
 onMounted(() => {
-    const savedTheme = localStorage.getItem('theme');
-    const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-
-    if (savedTheme) {
-        theme.value = savedTheme;
-    } else if (darkThemeMq.matches) {
-        theme.value = 'dark';
-    }
-
+    theme.value = 'dark';
     document.documentElement.classList.toggle('dark', theme.value === 'dark');
 });
 
@@ -49,16 +35,6 @@ onMounted(() => {
 
                 <!-- right nav -->
                 <div class="hidden lg:flex items-center gap-6">
-                    <button
-                        @click="toggleTheme"
-                        class="text-xl focus:outline-none rounded transition"
-                        :aria-label="theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
-                        :title="theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'"
-                    >
-                        <span v-if="theme === 'light'">🌙</span>
-                        <span v-else>☀️</span>
-                    </button>
-
                     <nav class="flex items-center gap-4 text-sm font-medium">
                         <template v-if="$page.props.auth.user">
                             <Link :href="route('dashboard')" class="hover:underline">
