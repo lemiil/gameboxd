@@ -1,6 +1,8 @@
 <script setup>
 import {Head} from "@inertiajs/vue3";
 import MainLayout from "@/Layouts/MainLayout.vue";
+import GameMetaInfo from "@/Components/GameMetaInfo.vue";
+import StarRating from "@/Components/StarRating.vue";
 import {ref, computed} from "vue";
 
 const {game} = defineProps({
@@ -9,20 +11,26 @@ const {game} = defineProps({
     },
 });
 
+const normalizeUrl = (url) => {
+    return url?.startsWith("//") ? "https:" + url : url;
+};
+
 const formattedDate = computed(() => {
-    if (!game.release_date) return 'TBD';
+    if (!game.release_date) return "TBD";
     const date = new Date(game.release_date);
-    const options = {year: 'numeric', month: 'long', day: 'numeric'};
-    return `${date.toLocaleDateString(undefined, options)}`;
+    const options = {year: "numeric", month: "long", day: "numeric"};
+    return date.toLocaleDateString(undefined, options);
 });
 
 const zoomedImage = ref(null);
 const openImage = (url) => {
-    zoomedImage.value = url.startsWith('//') ? 'https:' + url : url;
+    zoomedImage.value = normalizeUrl(url);
 };
 const closeImage = () => {
     zoomedImage.value = null;
 };
+
+const rating = ref(null)
 </script>
 
 <template>
@@ -32,27 +40,38 @@ const closeImage = () => {
             <div
                 v-if="game.screenshots?.[0]?.url"
                 class="absolute top-0 left-0 w-full h-[50vh] bg-cover bg-center opacity-20 z-0 transition-opacity duration-1000"
-                :style="{ backgroundImage: `url(${game.screenshots[0].url.startsWith('//') ? 'https:' + game.screenshots[0].url : game.screenshots[0].url})` }"
+                :style="{ backgroundImage: `url(${normalizeUrl(game.screenshots[0].url)})` }"
             >
                 <div class="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-[#1e1e20] to-transparent"></div>
             </div>
 
-
-
             <div class="relative z-20 max-w-6xl mx-auto mt-10 p-8">
                 <div class="flex flex-col mt-40 md:flex-row gap-6">
-                    <div class="flex justify-center">
-                        <img
-                            v-if="game.cover_url"
-                            :src="game.cover_url.startsWith('//') ? 'https:' + game.cover_url : game.cover_url"
-                            :alt="`${game.name} Cover`"
-                            class="w-full max-w-[175px] h-60 border-2 border-gray-700 rounded"
-                        />
+                    <div class="flex flex-col items-center">
+                        <div class="flex justify-center">
+                            <img
+                                v-if="game.cover_url"
+                                :src="normalizeUrl(game.cover_url)"
+                                :alt="`${game.name} Cover`"
+                                class="w-full max-w-[175px] h-60 border-2 border-gray-700 rounded"
+                            />
+                            <div
+                                v-else
+                                class="h-60 w-40 max-w-[400px] flex items-center justify-center border-2 border-dashed border-gray-700 rounded bg-gray-800 text-gray-400 text-center"
+                            >
+                                {{ game.name }}
+                            </div>
+                        </div>
+
+                        <button type="button"
+                                class="mt-3 bg-red-900 h-7 max-w-[175px] rounded flex w-full items-center justify-center ">
+                            Review
+                        </button>
+
                         <div
-                            v-else
-                            class="h-60 w-40 max-w-[400px] flex items-center justify-center border-2 border-dashed border-gray-700 rounded bg-gray-800 text-gray-400 text-center"
+                            class="mt-3 w-full max-w-[175px] h-auto bg-gray-900 border border-gray-700 rounded flex items-center justify-center text-gray-400 text-sm p-2"
                         >
-                            {{ game.name }}
+                            <StarRating v-model="rating"/>
                         </div>
                     </div>
 
@@ -71,8 +90,12 @@ const closeImage = () => {
                                         :key="company.id || index"
                                         class="mr-2"
                                     >
-                                        <strong>{{ company.name }}<span
-                                            v-if="index < game.companies.length - 1">,</span></strong>
+                                        <strong>
+                                            {{ company.name }}<span
+                                            v-if="index < game.companies.length - 1"
+                                        >,</span
+                                        >
+                                        </strong>
                                     </span>
                                 </div>
                             </div>
@@ -80,56 +103,25 @@ const closeImage = () => {
                             <p class="text-gray-200">{{ game.summary }}</p>
                         </div>
 
-                        <div class="md:w-1/3 space-y-4">
-                            <div v-if="game.genres?.length">
-                                <strong class="block mb-1">Genres</strong>
-                                <div class="flex flex-wrap gap-2">
-                                    <span
-                                        v-for="(genre, index) in game.genres"
-                                        :key="genre.id || index"
-                                        class="bg-gray-800 text-sm text-white px-3 py-1 rounded-md"
-                                    >
-                                        {{ genre.name }}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div v-if="game.themes?.length">
-                                <strong class="block mb-1">Themes</strong>
-                                <div class="flex flex-wrap gap-2">
-                                    <span
-                                        v-for="(theme, index) in game.themes"
-                                        :key="theme.id || index"
-                                        class="bg-gray-800 text-sm text-white px-3 py-1 rounded-md"
-                                    >
-                                        {{ theme.name }}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div v-if="game.platforms?.length">
-                                <strong class="block mb-1">Platforms</strong>
-                                <div class="flex flex-wrap gap-2">
-                                    <span
-                                        v-for="(platform, index) in game.platforms"
-                                        :key="platform.id || index"
-                                        class="bg-gray-800 text-sm text-white px-3 py-1 rounded-md"
-                                    >
-                                        {{ platform.name }}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
+                        <GameMetaInfo
+                            :genres="game.genres"
+                            :themes="game.themes"
+                            :platforms="game.platforms"
+                            class="md:w-1/3 space-y-4"
+                        />
                     </div>
                 </div>
 
                 <div class="mt-12">
                     <h2 class="text-3xl font-bold mb-6">Screenshots</h2>
-                    <div v-if="game.screenshots?.length" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                    <div
+                        v-if="game.screenshots?.length"
+                        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+                    >
                         <img
                             v-for="(screenshot, index) in game.screenshots"
                             :key="index"
-                            :src="screenshot.url.startsWith('//') ? 'https:' + screenshot.url : screenshot.url"
+                            :src="normalizeUrl(screenshot.url)"
                             :alt="`Screenshot ${index + 1} of ${game.name}`"
                             class="cursor-zoom-in rounded border border-gray-600 object-cover w-full h-48"
                             @click="openImage(screenshot.url)"
