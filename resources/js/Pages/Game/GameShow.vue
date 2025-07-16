@@ -1,8 +1,9 @@
 <script setup>
 import {Head} from "@inertiajs/vue3";
 import MainLayout from "@/Layouts/MainLayout.vue";
-import GameMetaInfo from "@/Components/GameMetaInfo.vue";
-import StarRating from "@/Components/StarRating.vue";
+import GameMetaInfo from "@/Components/GameShow/GameMetaInfo.vue";
+import ReviewBlock from "@/Components/GameShow/ReviewBlock.vue";
+
 import {ref, computed} from "vue";
 
 const {game} = defineProps({
@@ -30,7 +31,6 @@ const closeImage = () => {
     zoomedImage.value = null;
 };
 
-const rating = ref(null)
 </script>
 
 <template>
@@ -62,17 +62,7 @@ const rating = ref(null)
                                 {{ game.name }}
                             </div>
                         </div>
-
-                        <button type="button"
-                                class="mt-3 bg-red-900 h-7 max-w-[175px] rounded flex w-full items-center justify-center ">
-                            Review
-                        </button>
-
-                        <div
-                            class="mt-3 w-full max-w-[175px] h-auto bg-gray-900 border border-gray-700 rounded flex items-center justify-center text-gray-400 text-sm p-2"
-                        >
-                            <StarRating v-model="rating"/>
-                        </div>
+                        <ReviewBlock/>
                     </div>
 
 
