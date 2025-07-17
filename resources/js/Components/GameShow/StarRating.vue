@@ -1,81 +1,81 @@
+<script setup>
+import {defineProps, defineEmits} from 'vue'
+
+const props = defineProps({
+    modelValue: Number
+})
+const emit = defineEmits(['update:modelValue'])
+
+const setRating = (value) => {
+    emit('update:modelValue', value)
+}
+</script>
+
 <template>
-    <fieldset class="rating scale-110">
-        <template v-for="star in stars" :key="star.id">
+    <fieldset class="rate">
+        <template v-for="n in 11" :key="n">
             <input
                 type="radio"
-                :id="star.id"
+                :id="'rating' + (10 - n + 1)"
                 name="rating"
-                :value="star.value"
-                v-model="rating"
-                @change="saveRating"
+                :value="10 - n + 1"
+                :checked="modelValue === (10 - n + 1)"
+                @change="setRating(10 - n + 1)"
             />
-            <label :class="star.class" :for="star.id"></label>
+            <label
+                :for="'rating' + (10 - n + 1)"
+                :class="{ half: (10 - n + 1) % 2 !== 0 }"
+            ></label>
         </template>
     </fieldset>
 </template>
 
-<script setup>
-import {ref, onMounted} from 'vue'
-
-const rating = ref(null)
-
-const saveRating = () => {
-
-}
-
-onMounted(() => {
-
-})
-
-const stars = [
-    {id: 'star5', value: '10', class: 'full'},
-    {id: 'star4half', value: '9', class: 'half'},
-    {id: 'star4', value: '8', class: 'full'},
-    {id: 'star3half', value: '7', class: 'half'},
-    {id: 'star3', value: '6', class: 'full'},
-    {id: 'star2half', value: '5', class: 'half'},
-    {id: 'star2', value: '4', class: 'full'},
-    {id: 'star1half', value: '3', class: 'half'},
-    {id: 'star1', value: '2', class: 'full'},
-    {id: 'starhalf', value: '1', class: 'half'},
-]
-</script>
 
 <style scoped>
 @import url(//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css);
 
-.rating > input {
+.rate {
+    display: inline-block;
+    border: 0;
+}
+
+.rate > input {
     display: none;
 }
 
-.rating > label:before {
-    margin: 5px;
-    font-size: 1.25em;
-    font-family: FontAwesome;
-    display: inline-block;
-    content: "\f005";
-}
-
-.rating > .half:before {
-    content: "\f089";
-    position: absolute;
-}
-
-.rating > label {
-    color: #ddd;
+.rate > label {
     float: right;
 }
 
-.rating > input:checked ~ label,
-.rating:not(:checked) > label:hover,
-.rating:not(:checked) > label:hover ~ label {
-    color: #FFD700;
+.rate > label:before {
+    display: inline-block;
+    font-size: 1.1rem;
+    padding: .3rem .2rem;
+    margin: 0;
+    cursor: pointer;
+    font-family: FontAwesome;
+    content: "\f005 ";
 }
 
-.rating > input:checked + label:hover,
-.rating > input:checked ~ label:hover,
-.rating > label:hover ~ input:checked ~ label,
-.rating > input:checked ~ label:hover ~ label {
-    color: #FFED85;
+.rate > label:last-child:before {
+    content: "\f006 ";
 }
+
+.rate .half:before {
+    content: "\f089 ";
+    position: absolute;
+    padding-right: 0;
+}
+
+input:checked ~ label,
+label:hover, label:hover ~ label {
+    color: #73B100;
+}
+
+input:checked + label:hover, input:checked ~ label:hover,
+input:checked ~ label:hover ~ label,
+label:hover ~ input:checked ~ label {
+    color: #A6E72D;
+}
+
 </style>

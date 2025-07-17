@@ -1,16 +1,14 @@
 <script setup>
 import {ref} from "vue";
-import StarRating from "@/Components/GameShow/StarRating.vue";
+import StarRating from 'vue-star-rating'
 
+const rating = ref(0);
 const liked = ref(false)
-const rating = ref(null)
-const ratingPopup = ref(null)
 const showPopup = ref(false);
 const status = ref('planned')
 const reviewText = ref('')
 
 </script>
-
 <template>
     <div class="review-block w-full" v-if="$page.props.auth.user">
 
@@ -23,10 +21,23 @@ const reviewText = ref('')
         </button>
 
         <div
-            class="mt-3 w-full max-w-[175px] h-auto bg-gray-900 border border-gray-700 rounded flex items-center justify-center text-gray-400 text-sm p-2"
+            class="mt-3 w-full max-w-[175px] h-auto bg-gray-900 border border-gray-700 rounded flex items-center justify-start text-gray-400 text-sm p-2 group space-x-2"
         >
-            <StarRating v-model="rating"/>
+            <button
+                @click="rating = 0;"
+                class="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-gray-300 transition-opacity"
+            >
+                X
+            </button>
+
+            <star-rating
+                v-model:rating="rating"
+                increment="0.5"
+                :show-rating="false"
+                :star-size="25"
+            />
         </div>
+
 
         <select
             v-model="status"
@@ -89,7 +100,23 @@ const reviewText = ref('')
                 <h2 class="text-lg mb-2">Write a review</h2>
 
                 <div class="mb-3 items-center justify-center flex">
-                    <StarRating v-model="ratingPopup"/>
+                    <div
+                        class="mt-3 w-full max-w-[175px] h-auto bg-gray-900 rounded flex items-center justify-start text-gray-400 text-sm p-2 group space-x-2"
+                    >
+                        <button
+                            @click="rating = 0;"
+                            class="opacity-0 group-hover:opacity-100 text-gray-500 hover:text-gray-300 transition-opacity"
+                        >
+                            X
+                        </button>
+
+                        <star-rating
+                            v-model:rating="rating"
+                            increment="0.5"
+                            :show-rating="false"
+                            :star-size="25"
+                        />
+                    </div>
                 </div>
 
                 <select
