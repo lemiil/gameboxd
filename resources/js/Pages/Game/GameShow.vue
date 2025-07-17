@@ -34,6 +34,7 @@ const closeImage = () => {
 </script>
 
 <template>
+
     <Head :title="game.name"/>
     <MainLayout>
         <div class="relative">
