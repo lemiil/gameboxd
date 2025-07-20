@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Game;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class GameController extends Controller
@@ -20,8 +21,11 @@ class GameController extends Controller
             'themes:name',
         ])->where('slug', $request->slug)->firstOrFail();
 
+        $user = Auth::user();
+
         return Inertia::render('Game/GameShow', [
             'game' => $game,
+            'user' => $user,
         ]);
     }
 

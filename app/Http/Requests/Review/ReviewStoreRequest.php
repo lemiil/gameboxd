@@ -38,6 +38,7 @@ class ReviewStoreRequest extends FormRequest
             'status' => 'nullable|in:planned,played,dropped,completed,shelved',
             'platform' => 'nullable|exists:platforms,name',
             'game_id' => 'required|exists:games,id',
+            'user_id' => 'required|exists:users,id',
         ];
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Review\ReviewController;
 use App\Http\Controllers\Game\GameController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -21,17 +22,23 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+Route::post('/games/{game}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+
 Route::get('/games', [GameController::class, 'index'])->name('game.index');
 Route::get('/games/{slug}', [GameController::class, 'show'])->name('game.show');
 
 
 /////
 
-require __DIR__.'/auth.php';
 
 /////
 
-Route::get('/test', function() {
+require __DIR__ . '/auth.php';
+
+/////
+
+Route::get('/test', function () {
     $game = Game::where('name', 'Nightmare Kart: The Old Karts')->first();
 
     dd($game);

@@ -34,7 +34,6 @@ const closeImage = () => {
 </script>
 
 <template>
-
     <Head :title="game.name"/>
     <MainLayout>
         <div class="relative">
@@ -63,7 +62,7 @@ const closeImage = () => {
                                 {{ game.name }}
                             </div>
                         </div>
-                        <ReviewBlock/>
+                        <ReviewBlock :game="game"/>
                     </div>
 
 
