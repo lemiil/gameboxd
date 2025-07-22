@@ -12,7 +12,7 @@ class ReviewController extends Controller
     public function store(ReviewStoreRequest $request, Game $game)
     {
         $validatedData = $request->validated();
-        Review::create($validatedData);
+        Review::updateOrCreate($validatedData);
         return $game;
     }
 }

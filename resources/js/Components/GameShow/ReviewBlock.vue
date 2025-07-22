@@ -49,7 +49,6 @@ const submitReview = async () => {
 
 
 <template>
-    <pre>{{ user.id }}</pre>
     <div class="review-block w-full" v-if="$page.props.auth.user">
 
         <button
@@ -80,6 +79,7 @@ const submitReview = async () => {
 
 
         <select
+            @click="submitReview"
             v-model="status"
             class="mt-3 bg-gray-900 border border-gray-700 text-gray-400 text-sm text-center rounded  w-full max-w-[175px] px-2"
         >
@@ -92,6 +92,7 @@ const submitReview = async () => {
 
         <button
             @click="liked = !liked"
+
             class="mt-3 h-7 w-full max-w-[175px] bg-gray-900 border border-gray-700 rounded flex items-center justify-center text-gray-400 text-sm gap-1"
         >
             <svg
