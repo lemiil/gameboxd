@@ -10,6 +10,9 @@ const {game} = defineProps({
     game: {
         type: Object,
     },
+    userReview: {
+        type: Object,
+    }
 });
 
 const normalizeUrl = (url) => {
@@ -62,7 +65,7 @@ const closeImage = () => {
                                 {{ game.name }}
                             </div>
                         </div>
-                        <ReviewBlock :game="game"/>
+                        <ReviewBlock :game="game" :userReview="userReview"/>
                     </div>
 
 

@@ -1,29 +1,42 @@
 <script setup>
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import axios from "axios";
-import StarRating from 'vue-star-rating'
-import {usePage} from '@inertiajs/vue3'
+import StarRating from 'vue-star-rating';
+import {usePage} from '@inertiajs/vue3';
 
-let rating = ref(0);
-let liked = ref(false)
-let showPopup = ref(false);
-let status = ref('planned')
-let reviewText = ref('')
-let isSubmitting = ref(false);
-
-const {game} = defineProps({
+const {game, userReview} = defineProps({
     game: {
         type: Object,
-        required: true
     },
+    userReview: {
+        type: Object,
+    }
 });
 
-const user = usePage().props.auth.user
 
+const user = usePage().props.auth.user;
+
+let rating = ref(0);
+let liked = ref(false);
+let status = ref('played');
+let reviewText = ref('');
+
+if (userReview) {
+    rating.value = userReview.rating / 2 ?? 0;
+    liked.value = userReview.liked ?? false;
+    status.value = userReview.status ?? 'played';
+    reviewText.value = userReview.text ?? '';
+}
+
+
+let isPopupActive = ref(false);
+let isSubmitting = ref(false);
+let showPopup = ref(false);
 const submitReview = async () => {
-    if (rating.value === 0 || !game.id) return;
+    if (!game.id || !status.value || isPopupActive.value) return;
 
     isSubmitting.value = true;
+
     try {
         await axios.post(`/games/${game.id}/reviews`, {
             rating: rating.value * 2,
@@ -33,22 +46,23 @@ const submitReview = async () => {
             game_id: game.id,
             user_id: user.id,
         });
-
-        rating.value = 0;
-        liked.value = false;
-        status.value = 'planned';
-        reviewText.value = '';
-        showPopup.value = false;
     } catch (error) {
         console.error('Error submitting review:', error);
     } finally {
         isSubmitting.value = false;
     }
-}
+};
+
+watch([rating, liked, status], () => {
+    if (!showPopup.value) {
+        submitReview();
+    }
+});
 </script>
 
 
 <template>
+
     <div class="review-block w-full" v-if="$page.props.auth.user">
 
         <button
@@ -79,11 +93,10 @@ const submitReview = async () => {
 
 
         <select
-            @click="submitReview"
             v-model="status"
             class="mt-3 bg-gray-900 border border-gray-700 text-gray-400 text-sm text-center rounded  w-full max-w-[175px] px-2"
         >
-            <option value="played">Played</option>
+            <option selected value="played">Played</option>
             <option value="planned">Planned</option>
             <option value="dropped">Dropped</option>
             <option value="completed">Completed</option>

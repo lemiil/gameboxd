@@ -21,10 +21,7 @@ class IGDBGameImporter
         if ($coverUrl) {
             $coverUrl = str_replace('t_thumb', 't_cover_big_2x', $coverUrl);
         }
-
-
-
-
+        
         $game = Game::updateOrCreate(
             ['slug' => $igdbGame->slug],
             [
