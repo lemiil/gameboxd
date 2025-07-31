@@ -1,12 +1,15 @@
 <?php
 
+use App\Http\Controllers\Review\LikeController;
 use App\Http\Controllers\Review\ReviewController;
 use App\Http\Controllers\Game\GameController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use MarcReichel\IGDBLaravel\Models\Game;
+
+// TODO нормально расписать руты, закомментировать, добавить мидлвейр
+
 
 Route::get('/', function () {
     return Inertia::render('Main');
@@ -28,6 +31,7 @@ Route::post('/games/{game}/reviews', [ReviewController::class, 'store'])->name('
 Route::get('/games', [GameController::class, 'index'])->name('game.index');
 Route::get('/games/{slug}', [GameController::class, 'show'])->name('game.show');
 
+Route::post('/like/review/{review}', [LikeController::class, 'like']);
 
 /////
 
