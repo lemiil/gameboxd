@@ -3,6 +3,7 @@ import {Head} from "@inertiajs/vue3";
 import MainLayout from "@/Layouts/MainLayout.vue";
 import GameMetaInfo from "@/Components/GameShow/GameMetaInfo.vue";
 import ReviewBlock from "@/Components/GameShow/ReviewBlock.vue";
+import Reviews from "@/Components/GameShow/Reviews.vue";
 
 import {ref, computed} from "vue";
 
@@ -130,6 +131,7 @@ const closeImage = () => {
                 >
                     <img :src="zoomedImage" class="max-w-full max-h-full rounded-lg shadow-lg"/>
                 </div>
+                <Reviews :game="game"/>
             </div>
         </div>
     </MainLayout>

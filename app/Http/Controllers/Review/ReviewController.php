@@ -10,6 +10,17 @@ use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
+    public function latest(Game $game)
+    {
+        $reviews = Review::with('user')
+            ->where('game_id', $game->id)
+            ->orderByDesc('created_at')
+            ->limit(6)
+            ->get();
+
+        return response()->json($reviews);
+    }
+
     public function store(ReviewStoreRequest $request, Game $game)
     {
         $validated = $request->validated();

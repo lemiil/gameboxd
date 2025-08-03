@@ -27,6 +27,8 @@ Route::middleware('auth')->group(function () {
 
 
 Route::post('/games/{game}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+Route::get('/games/{game}/reviews/latest', [ReviewController::class, 'latest'])->name('reviews.latest');
+
 
 Route::get('/games', [GameController::class, 'index'])->name('game.index');
 Route::get('/games/{slug}', [GameController::class, 'show'])->name('game.show');
