@@ -11,6 +11,19 @@ const latestReviews = ref([]);
 const loading = ref(true);
 const error = ref(null);
 
+const expandedReviews = ref(new Set());
+
+const isExpanded = (reviewId) => expandedReviews.value.has(reviewId);
+
+const toggleExpand = (reviewId) => {
+    if (expandedReviews.value.has(reviewId)) {
+        expandedReviews.value.delete(reviewId);
+    } else {
+        expandedReviews.value.add(reviewId);
+    }
+};
+
+
 const formatDate = (isoString) => {
     try {
         const d = new Date(isoString);
@@ -47,6 +60,22 @@ onMounted(async () => {
         loading.value = false;
     }
 });
+
+
+const escapeHtml = (unsafeText) => {
+    return unsafeText
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+};
+
+const formatText = (text) => {
+    return escapeHtml(text).replace(/\n/g, "<br>");
+};
+
+
 </script>
 
 <template>
@@ -59,7 +88,7 @@ onMounted(async () => {
             There is no reviews. <a :href="placeholder" class="text-blue-500 underline">You
             can be first!</a>
         </div>
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div v-else class="grid grid-cols-1 md:grid-cols-1 gap-6">
             <div
                 v-for="review in latestReviews"
                 :key="review.id"
@@ -105,9 +134,23 @@ onMounted(async () => {
                                 :show-rating="false"/>
                 </div>
 
-                <p class="mt-3 text-gray-700 dark:text-gray-200 flex-1">
-                    {{ review.text }}
+                <p
+                    class="mt-3 text-gray-700 dark:text-gray-200 flex-1"
+                    v-html="isExpanded(review.id)
+                    ? formatText(review.text)
+                    : formatText(review.text.slice(0, 150) + (review.text.length > 150 ? '...' : ''))">
                 </p>
+
+
+                <div v-if="review.text.length > 300" class="mt-1">
+                    <button
+                        @click="toggleExpand(review.id)"
+                        class="text-gray-500 text-sm hover:text-red-600 transition"
+                    >
+                        {{ isExpanded(review.id) ? 'Show less' : 'Show more' }}
+                    </button>
+                </div>
+
 
                 <div class="mt-4 flex items-center justify-between">
                     <button
