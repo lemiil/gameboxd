@@ -1,5 +1,5 @@
 <script setup>
-import {ref, computed, onMounted} from "vue";
+import {ref, onMounted} from "vue";
 import axios from "axios";
 import StarRating from "vue-star-rating";
 
@@ -10,8 +10,11 @@ const props = defineProps({
 const latestReviews = ref([]);
 const loading = ref(true);
 const error = ref(null);
-
 const expandedReviews = ref(new Set());
+
+const likedReviewIds = ref(new Set());
+
+const userLiked = (reviewId) => likedReviewIds.value.has(reviewId);
 
 const isExpanded = (reviewId) => expandedReviews.value.has(reviewId);
 
@@ -22,7 +25,6 @@ const toggleExpand = (reviewId) => {
         expandedReviews.value.add(reviewId);
     }
 };
-
 
 const formatDate = (isoString) => {
     try {
@@ -37,22 +39,43 @@ const formatDate = (isoString) => {
     }
 };
 
-const toggleLike = async (review) => {
-    review.liked = !review.liked;
+const toggleUserLike = async (review) => {
+    const liked = userLiked(review.id);
+    if (liked) {
+        likedReviewIds.value.delete(review.id);
+        review.likes_count--;
+    } else {
+        likedReviewIds.value.add(review.id);
+        review.likes_count++;
+    }
+
     try {
-        const url = route("reviews.toggleLike", {review: review.id});
+        const url = route("reviews.like", {review: review.id});
         await axios.post(url);
     } catch (e) {
-        review.liked = !review.liked;
+        if (liked) {
+            likedReviewIds.value.add(review.id);
+            review.likes_count++;
+        } else {
+            likedReviewIds.value.delete(review.id);
+            review.likes_count--;
+        }
         console.error("Failed to toggle like", e);
     }
 };
 
 onMounted(async () => {
     try {
-        const url = route("reviews.latest", {game: props.game.id});
-        const {data} = await axios.get(url);
-        latestReviews.value = data;
+        const urlReviews = route("reviews.latest", {game: props.game.id});
+        const {data: reviewsData} = await axios.get(urlReviews);
+        latestReviews.value = reviewsData;
+
+        const reviewIds = latestReviews.value.map(r => r.id);
+        if (reviewIds.length > 0) {
+            const urlLikes = route("reviews.likes.status");
+            const {data: likesData} = await axios.post(urlLikes, {review_ids: reviewIds});
+            likedReviewIds.value = new Set(likesData.likedReviews);
+        }
     } catch (e) {
         error.value = "reviews error";
         console.error(e);
@@ -60,7 +83,6 @@ onMounted(async () => {
         loading.value = false;
     }
 });
-
 
 const escapeHtml = (unsafeText) => {
     return unsafeText
@@ -74,8 +96,6 @@ const escapeHtml = (unsafeText) => {
 const formatText = (text) => {
     return escapeHtml(text).replace(/\n/g, "<br>");
 };
-
-
 </script>
 
 <template>
@@ -84,13 +104,12 @@ const formatText = (text) => {
 
         <div v-if="loading" class="text-gray-400">loading...</div>
         <div v-else-if="error" class="text-red-500">{{ error }}</div>
-        <div v-else-if="latestReviews.length === 0" class="italic text-gray-400">
-            There is no reviews. <a :href="placeholder" class="text-blue-500 underline">You
-            can be first!</a>
+        <div v-else-if="latestReviews.length === 0" class="text-gray-400">
+            There is no reviews. <span class="text-red-500" @click="showPopup = true">You can be first!</span>
         </div>
         <div v-else class="grid grid-cols-1 md:grid-cols-1 gap-6">
             <div
-                v-for="review in latestReviews"
+                v-for="review in latestReviews.filter(r => r.text && r.text.trim() !== '')"
                 :key="review.id"
                 class="dark:bg-gray-800 border border-gray-600 rounded-2xl p-5 shadow-sm flex flex-col"
             >
@@ -114,15 +133,15 @@ const formatText = (text) => {
                         <div
                             v-if="review.status"
                             :class="[
-                'text-xs font-medium px-2 py-1 rounded-full',
-                review.status === 'approved'
-                  ? 'bg-green-100 text-green-800'
-                  : review.status === 'pending'
-                  ? 'bg-yellow-100 text-yellow-800'
-                  : review.status === 'rejected'
-                  ? 'bg-red-100 text-red-800'
-                  : 'bg-gray-100 text-gray-800',
-              ]"
+                                'text-xs font-medium px-2 py-1 rounded-full',
+                                review.status === 'approved'
+                                  ? 'bg-green-100 text-green-800'
+                                  : review.status === 'pending'
+                                  ? 'bg-yellow-100 text-yellow-800'
+                                  : review.status === 'rejected'
+                                  ? 'bg-red-100 text-red-800'
+                                  : 'bg-gray-100 text-gray-800',
+                            ]"
                         >
                             {{ review.status }}
                         </div>
@@ -141,7 +160,6 @@ const formatText = (text) => {
                     : formatText(review.text.slice(0, 150) + (review.text.length > 150 ? '...' : ''))">
                 </p>
 
-
                 <div v-if="review.text.length > 300" class="mt-1">
                     <button
                         @click="toggleExpand(review.id)"
@@ -151,41 +169,38 @@ const formatText = (text) => {
                     </button>
                 </div>
 
-
                 <div class="mt-4 flex items-center justify-between">
                     <button
-                        @click="toggleLike(review)"
+                        @click="toggleUserLike(review)"
                         class="inline-flex items-center gap-1 text-sm font-medium focus:outline-none"
                     >
                         <svg
-                            v-if="review.liked"
+                            v-if="userLiked(review.id)"
                             xmlns="http://www.w3.org/2000/svg"
-                            class="h-5 w-5 text-red-500"
-                            viewBox="0 0 20 20"
                             fill="currentColor"
+                            viewBox="0 0 24 24"
+                            class="w-4 h-4 text-red-500"
                         >
                             <path
-                                fill-rule="evenodd"
-                                d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                                clip-rule="evenodd"
+                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C14.46 4.99 15.96 4 17.5 4 20 4 22 6 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
                             />
                         </svg>
                         <svg
                             v-else
                             xmlns="http://www.w3.org/2000/svg"
-                            class="h-5 w-5 text-gray-400"
                             fill="none"
-                            viewBox="0 0 24 24"
                             stroke="currentColor"
-                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                            class="w-4 h-4"
                         >
                             <path
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
-                                d="M3.172 5.172a4 4 0 015.656 0L12 8.343l3.172-3.171a4 4 0 115.656 5.656L12 21.657l-8.828-8.829a4 4 0 010-5.656z"
+                                stroke-width="2"
+                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.54 0 3.04.99 3.57 2.36h.87C14.46 4.99 15.96 4 17.5 4 20 4 22 6 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
                             />
                         </svg>
-                        <span class="ml-1">{{ review.liked ? "Liked" : "Like" }}</span>
+                        <span>{{ review.likes_count }}</span>
                     </button>
                     <div class="text-xs text-gray-400">Open review</div>
                 </div>

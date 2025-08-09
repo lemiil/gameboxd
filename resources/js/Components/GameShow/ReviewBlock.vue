@@ -2,6 +2,7 @@
 import {ref, watch} from "vue";
 import axios from "axios";
 import StarRating from 'vue-star-rating';
+import {Link} from "@inertiajs/vue3";
 import {usePage} from '@inertiajs/vue3';
 
 const {game, userReview} = defineProps({
@@ -239,7 +240,7 @@ watch([rating, liked, status], () => {
         <div
             class="mt-3 w-full max-w-[175px] h-auto bg-gray-900 border border-gray-700 rounded flex items-center justify-center text-gray-400 text-sm p-2"
         >
-            Please Log in
+            <Link :href="route('login')">Please log in</Link>
         </div>
     </div>
 </template>

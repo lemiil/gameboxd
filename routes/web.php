@@ -33,7 +33,8 @@ Route::get('/games/{game}/reviews/latest', [ReviewController::class, 'latest'])-
 Route::get('/games', [GameController::class, 'index'])->name('game.index');
 Route::get('/games/{slug}', [GameController::class, 'show'])->name('game.show');
 
-Route::post('/like/review/{review}', [LikeController::class, 'like']);
+Route::post('/reviews/like/{review}', [LikeController::class, 'reviews.like']);
+Route::post('/user/reviews/likes', [LikeController::class, 'reviews.likes.status']);
 
 /////
 

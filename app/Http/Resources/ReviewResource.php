@@ -15,6 +15,7 @@ class ReviewResource extends JsonResource
             'rating' => $this->rating,
             'status' => $this->status,
             'liked' => (bool)$this->liked,
+            'likes_count' => $this->likers()->count(),
             'created_at' => $this->created_at->toDateTimeString(),
             'user' => [
                 'id' => $this->user->id,

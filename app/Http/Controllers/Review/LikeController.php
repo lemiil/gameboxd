@@ -26,4 +26,17 @@ class LikeController extends Controller
             return response()->json(['error' => 'Something went wrong'], 500);
         }
     }
+
+    public function status(Request $request)
+    {
+        $user = Auth::user();
+
+        $reviewIds = $request->input('review_ids');
+
+        $likedReviews = $user->likes()->withType(Review::class)->whereIn('likeable_id', $reviewIds)->pluck('likeable_id')->toArray();
+
+        return response()->json([
+            'likedReviews' => $likedReviews
+        ]);
+    }
 }
