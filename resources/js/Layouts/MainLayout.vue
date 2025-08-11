@@ -21,7 +21,7 @@ onMounted(() => {
         <!-- header -->
         <header class="bg-gray-100 dark:bg-gray-800 shadow-sm">
             <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-                <h1 class="text-2xl font-bold tracking-tight">Gameboxd</h1>
+                <Link :href="route('main')" class="text-2xl font-bold tracking-tight">Gameboxd</Link>
 
                 <!-- mobile -->
 <!--                <button-->

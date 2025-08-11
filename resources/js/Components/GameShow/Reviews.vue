@@ -1,5 +1,6 @@
 <script setup>
 import {ref, onMounted} from "vue";
+import {usePage, router} from "@inertiajs/vue3";
 import axios from "axios";
 import StarRating from "vue-star-rating";
 
@@ -7,15 +8,16 @@ const props = defineProps({
     game: {type: Object, required: true},
 });
 
+const page = usePage();
+const isAuthenticated = page.props.auth?.user !== null;
+
 const latestReviews = ref([]);
 const loading = ref(true);
 const error = ref(null);
 const expandedReviews = ref(new Set());
-
 const likedReviewIds = ref(new Set());
 
 const userLiked = (reviewId) => likedReviewIds.value.has(reviewId);
-
 const isExpanded = (reviewId) => expandedReviews.value.has(reviewId);
 
 const toggleExpand = (reviewId) => {
@@ -40,6 +42,11 @@ const formatDate = (isoString) => {
 };
 
 const toggleUserLike = async (review) => {
+    if (!isAuthenticated) {
+        router.visit(route("login"));
+        return;
+    }
+
     const liked = userLiked(review.id);
     if (liked) {
         likedReviewIds.value.delete(review.id);
@@ -66,15 +73,18 @@ const toggleUserLike = async (review) => {
 
 onMounted(async () => {
     try {
-        const urlReviews = route("reviews.latest", {game: props.game.id});
-        const {data: reviewsData} = await axios.get(urlReviews);
-        latestReviews.value = reviewsData;
+        const urlReviews = route("reviews.latest", { game: props.game.id });
+        const { data: reviewsData } = await axios.get(urlReviews);
 
-        const reviewIds = latestReviews.value.map(r => r.id);
-        if (reviewIds.length > 0) {
-            const urlLikes = route("reviews.likes.status");
-            const {data: likesData} = await axios.post(urlLikes, {review_ids: reviewIds});
-            likedReviewIds.value = new Set(likesData.likedReviews);
+        latestReviews.value = reviewsData.data;
+
+        if (isAuthenticated) {
+            const reviewIds = latestReviews.value.map(r => r.id);
+            if (reviewIds.length > 0) {
+                const urlLikes = route("reviews.likes.status");
+                const { data: likesData } = await axios.post(urlLikes, { review_ids: reviewIds });
+                likedReviewIds.value = new Set(likesData.likedReviews);
+            }
         }
     } catch (e) {
         error.value = "reviews error";
@@ -99,6 +109,7 @@ const formatText = (text) => {
 </script>
 
 <template>
+    <pre> {{ latestReviews }}</pre>
     <div class="mt-12">
         <h2 class="text-3xl font-bold mb-4">Reviews</h2>
 
@@ -116,7 +127,7 @@ const formatText = (text) => {
                 <div class="flex items-start justify-between">
                     <div class="flex items-center gap-3">
                         <img
-                            :src="review.user.avatar_url || 'placeholder'"
+                            :src="review.user.avatar_url || 'placeholderYEAH'"
                             alt="avatar"
                             class="w-12 h-12 rounded-full object-cover border"
                         />

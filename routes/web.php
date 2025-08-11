@@ -13,7 +13,7 @@ use MarcReichel\IGDBLaravel\Models\Game;
 
 Route::get('/', function () {
     return Inertia::render('Main');
-});
+})->name('main');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -33,8 +33,8 @@ Route::get('/games/{game}/reviews/latest', [ReviewController::class, 'latest'])-
 Route::get('/games', [GameController::class, 'index'])->name('game.index');
 Route::get('/games/{slug}', [GameController::class, 'show'])->name('game.show');
 
-Route::post('/reviews/like/{review}', [LikeController::class, 'reviews.like']);
-Route::post('/user/reviews/likes', [LikeController::class, 'reviews.likes.status']);
+Route::post('/reviews/like/{review}', [LikeController::class, 'like'])->name("reviews.like");
+Route::post('/user/reviews/likes', [LikeController::class, 'status'])->name("reviews.likes.status");
 
 /////
 

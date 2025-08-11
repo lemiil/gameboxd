@@ -7,9 +7,12 @@ use App\Http\Requests\Review\ReviewStoreRequest;
 use App\Models\Game;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\ReviewResource;
 
 class ReviewController extends Controller
 {
+
+
     public function latest(Game $game)
     {
         $reviews = Review::with('user')
@@ -18,8 +21,9 @@ class ReviewController extends Controller
             ->limit(6)
             ->get();
 
-        return response()->json($reviews);
+        return ReviewResource::collection($reviews);
     }
+
 
     public function store(ReviewStoreRequest $request, Game $game)
     {
