@@ -26,15 +26,16 @@ Route::middleware('auth')->group(function () {
 });
 
 
-Route::post('/games/{game}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-Route::get('/games/{game}/reviews/latest', [ReviewController::class, 'latest'])->name('reviews.latest');
+Route::post('/games/{game}/reviews', [ReviewController::class, 'store'])->name('review.store');
+Route::get('/games/{game}/reviews/latest', [ReviewController::class, 'latest'])->name('review.latest');
+Route::get('/games/{game}/reviews/popular', [ReviewController::class, 'popular'])->name('review.popular');
 
 
 Route::get('/games', [GameController::class, 'index'])->name('game.index');
 Route::get('/games/{slug}', [GameController::class, 'show'])->name('game.show');
 
-Route::post('/reviews/like/{review}', [LikeController::class, 'like'])->name("reviews.like");
-Route::post('/user/reviews/likes', [LikeController::class, 'status'])->name("reviews.likes.status");
+Route::post('/reviews/like/{review}', [LikeController::class, 'like'])->name("review.like");
+Route::post('/user/reviews/likes', [LikeController::class, 'status'])->name("review.likes.status");
 
 /////
 

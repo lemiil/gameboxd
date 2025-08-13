@@ -24,6 +24,19 @@ class ReviewController extends Controller
         return ReviewResource::collection($reviews);
     }
 
+    public function popular(Game $game)
+    {
+        $reviews = Review::with('user')
+            ->where('game_id', $game->id)
+            ->withCount('likers')
+            ->orderByDesc('likers_count')
+            ->limit(6)
+            ->get();
+
+        return ReviewResource::collection($reviews);
+    }
+
+
 
     public function store(ReviewStoreRequest $request, Game $game)
     {

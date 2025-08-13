@@ -11,11 +11,12 @@ const props = defineProps({
 const page = usePage();
 const isAuthenticated = page.props.auth?.user !== null;
 
-const latestReviews = ref([]);
+const reviews = ref([]);
 const loading = ref(true);
 const error = ref(null);
 const expandedReviews = ref(new Set());
 const likedReviewIds = ref(new Set());
+const activeTab = ref("latest");
 
 const userLiked = (reviewId) => likedReviewIds.value.has(reviewId);
 const isExpanded = (reviewId) => expandedReviews.value.has(reviewId);
@@ -57,7 +58,7 @@ const toggleUserLike = async (review) => {
     }
 
     try {
-        const url = route("reviews.like", {review: review.id});
+        const url = route("review.like", {review: review.id});
         await axios.post(url);
     } catch (e) {
         if (liked) {
@@ -71,17 +72,21 @@ const toggleUserLike = async (review) => {
     }
 };
 
-onMounted(async () => {
+const fetchReviews = async () => {
+    loading.value = true;
     try {
-        const urlReviews = route("reviews.latest", { game: props.game.id });
-        const { data: reviewsData } = await axios.get(urlReviews);
+        const urlReviews =
+            activeTab.value === "latest"
+                ? route("review.latest", { game: props.game.id })
+                : route("review.popular", { game: props.game.id });
 
-        latestReviews.value = reviewsData.data;
+        const { data: reviewsData } = await axios.get(urlReviews);
+        reviews.value = reviewsData.data;
 
         if (isAuthenticated) {
-            const reviewIds = latestReviews.value.map(r => r.id);
+            const reviewIds = reviews.value.map(r => r.id);
             if (reviewIds.length > 0) {
-                const urlLikes = route("reviews.likes.status");
+                const urlLikes = route("review.likes.status");
                 const { data: likesData } = await axios.post(urlLikes, { review_ids: reviewIds });
                 likedReviewIds.value = new Set(likesData.likedReviews);
             }
@@ -92,7 +97,16 @@ onMounted(async () => {
     } finally {
         loading.value = false;
     }
-});
+};
+
+onMounted(fetchReviews);
+
+const changeTab = (tab) => {
+    if (activeTab.value !== tab) {
+        activeTab.value = tab;
+        fetchReviews();
+    }
+};
 
 const escapeHtml = (unsafeText) => {
     return unsafeText
@@ -108,19 +122,44 @@ const formatText = (text) => {
 };
 </script>
 
+
 <template>
-    <pre> {{ latestReviews }}</pre>
     <div class="mt-12">
         <h2 class="text-3xl font-bold mb-4">Reviews</h2>
 
+        <div class="flex gap-4 mb-6">
+            <button
+                @click="changeTab('latest')"
+                :class="[
+                    'px-4 py-2 rounded-lg font-medium transition',
+                    activeTab === 'latest'
+                        ? 'bg-red-700 text-white'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                ]"
+            >
+                New
+            </button>
+            <button
+                @click="changeTab('popular')"
+                :class="[
+                    'px-4 py-2 rounded-lg font-medium transition',
+                    activeTab === 'popular'
+                        ? 'bg-red-700 text-white'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
+                ]"
+            >
+                Popular
+            </button>
+        </div>
+
         <div v-if="loading" class="text-gray-400">loading...</div>
         <div v-else-if="error" class="text-red-500">{{ error }}</div>
-        <div v-else-if="latestReviews.length === 0" class="text-gray-400">
+        <div v-else-if="reviews.length === 0" class="text-gray-400">
             There is no reviews. <span class="text-red-500" @click="showPopup = true">You can be first!</span>
         </div>
         <div v-else class="grid grid-cols-1 md:grid-cols-1 gap-6">
             <div
-                v-for="review in latestReviews.filter(r => r.text && r.text.trim() !== '')"
+                v-for="review in reviews.filter(r => r.text && r.text.trim() !== '')"
                 :key="review.id"
                 class="dark:bg-gray-800 border border-gray-600 rounded-2xl p-5 shadow-sm flex flex-col"
             >
