@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Game\GameSearchController;
 use App\Http\Controllers\Review\LikeController;
 use App\Http\Controllers\Review\ReviewController;
 use App\Http\Controllers\Game\GameController;
@@ -30,6 +31,7 @@ Route::post('/games/{game}/reviews', [ReviewController::class, 'store'])->name('
 Route::get('/games/{game}/reviews/latest', [ReviewController::class, 'latest'])->name('review.latest');
 Route::get('/games/{game}/reviews/popular', [ReviewController::class, 'popular'])->name('review.popular');
 
+Route::get('/games/search', [GameSearchController::class, 'index'])->name('game.search');
 
 Route::get('/games', [GameController::class, 'index'])->name('game.index');
 Route::get('/games/{slug}', [GameController::class, 'show'])->name('game.show');

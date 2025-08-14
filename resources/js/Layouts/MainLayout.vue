@@ -1,20 +1,38 @@
 <script setup>
-
-import { Link } from '@inertiajs/vue3';
-import { onMounted, ref } from 'vue';
-import Main from "@/Pages/Main.vue";
-
+import { Link } from '@inertiajs/vue3'
+import { onMounted, ref, watch } from 'vue'
+import axios from 'axios'
 import { usePage } from '@inertiajs/vue3'
-const page = usePage()
 
-const theme = ref('light');
+const page = usePage()
+const theme = ref('light')
+const searchQuery = ref('')
+const searchResults = ref([])
+let debounceTimer = null
 
 onMounted(() => {
-    theme.value = 'dark';
-    document.documentElement.classList.toggle('dark', theme.value === 'dark');
-});
+    theme.value = 'dark'
+    document.documentElement.classList.toggle('dark', theme.value === 'dark')
+})
 
+watch(searchQuery, (newValue) => {
+    clearTimeout(debounceTimer)
+    if (!newValue) {
+        searchResults.value = []
+        return
+    }
+    debounceTimer = setTimeout(async () => {
+        try {
+            const { data } = await axios.get(route('game.search'), { params: { q: newValue } })
+            searchResults.value = data
+        } catch (error) {
+            console.error(error)
+        }
+    }, 300)
+})
 </script>
+
+
 
 <template>
     <div class="min-h-screen flex flex-col bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
@@ -23,20 +41,38 @@ onMounted(() => {
             <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
                 <Link :href="route('main')" class="text-2xl font-bold tracking-tight">Gameboxd</Link>
 
-                <!-- mobile -->
-<!--                <button-->
-<!--                    v-if="$page.props.auth.user"-->
-<!--                    @click="isMenuOpen = !isMenuOpen"-->
-<!--                    class="lg:hidden text-2xl focus:outline-none"-->
-<!--                    aria-label="Toggle menu"-->
-<!--                >-->
-<!--                    ☰-->
-<!--                </button>-->
-
                 <!-- right nav -->
                 <div class="hidden lg:flex items-center gap-6">
                     <nav class="flex items-center gap-4 text-sm font-medium">
+                        <div class="relative">
+                            <input
+                                v-model="searchQuery"
+                                type="text"
+                                placeholder="Search..."
+                                class="px-3 py-1 rounded-l border border-gray-300 focus:ring-1 focus:ring-red-600 dark:border-gray-700 dark:bg-gray-900"
+                            />
+                            <div
+                                v-if="searchResults.length"
+                                class="absolute left-0 right-0 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 mt-1 rounded shadow-lg z-50"
+                            >
+                                <ul class="max-h-60 overflow-y-auto">
+                                    <li
+                                        v-for="game in searchResults"
+                                        :key="game.slug"
+                                        class="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                    >
+                                        <Link :href="route('game.show', game.slug)">
+                                            {{ game.name }}
+                                        </Link>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+
                         <template v-if="$page.props.auth.user">
+
+                            <!-- Никнейм -->
                             <Link :href="route('dashboard')" class="hover:underline">
                                 {{ $page.props.auth.user.name || 'Dashboard' }}
                             </Link>
@@ -51,25 +87,9 @@ onMounted(() => {
                     </nav>
                 </div>
             </div>
-
-            <!-- mobile menu -->
-            <div
-                v-if="isMenuOpen"
-                class="lg:hidden px-4 pb-4 max-w-4xl mx-auto"
-            >
-                <div class="flex flex-col gap-4 text-sm font-medium">
-                    <Link :href="route('dashboard')" class="hover:underline">
-                        {{ $page.props.auth.user.name || 'Dashboard' }}
-                    </Link>
-                    <Link :href="route('logout')" method="post" as="button" class="hover:underline">
-                        Log out
-                    </Link>
-                </div>
-            </div>
         </header>
 
         <!-- main -->
-
         <main v-if="page.component !== 'Game/GameShow'" class="flex-1 max-w-6xl mx-auto px-4 py-10">
             <slot />
         </main>
@@ -88,7 +108,3 @@ onMounted(() => {
         </footer>
     </div>
 </template>
-
-<style scoped>
-
-</style>
