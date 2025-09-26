@@ -41,7 +41,9 @@ cd gameboxd
 ```
 docker-compose up --build -d
 ```
-4. Run migrations
+4. Run
 ```
+docker-compose exec app composer install
+
 docker-compose exec app php artisan migrate --seed
 ```
