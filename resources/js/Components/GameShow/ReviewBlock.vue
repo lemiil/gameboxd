@@ -19,7 +19,7 @@ const user = usePage().props.auth.user;
 
 let rating = ref(0);
 let liked = ref(false);
-let status = ref('played');
+let status = ref('unplayed');
 let reviewText = ref('');
 
 if (userReview) {
@@ -102,7 +102,9 @@ watch([rating, liked, status], () => {
             <option value="dropped">Dropped</option>
             <option value="completed">Completed</option>
             <option value="shelved">Shelved</option>
+            <option value="unplayed">Unplayed</option>
         </select>
+
 
         <button
             @click="liked = !liked"
@@ -183,7 +185,9 @@ watch([rating, liked, status], () => {
                     <option value="dropped">Dropped</option>
                     <option value="completed">Completed</option>
                     <option value="shelved">Shelved</option>
+                    <option value="unplayed">Unplayed</option>
                 </select>
+
 
                 <button
                     @click="liked = !liked"
