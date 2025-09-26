@@ -1,10 +1,11 @@
 <?php
 
+use App\Http\Controllers\Game\GameController;
 use App\Http\Controllers\Game\GameSearchController;
 use App\Http\Controllers\Review\LikeController;
 use App\Http\Controllers\Review\ReviewController;
-use App\Http\Controllers\Game\GameController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\User\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use MarcReichel\IGDBLaravel\Models\Game;
@@ -38,6 +39,15 @@ Route::get('/games/{slug}', [GameController::class, 'show'])->name('game.show');
 
 Route::post('/reviews/like/{review}', [LikeController::class, 'like'])->name("review.like");
 Route::post('/user/reviews/likes', [LikeController::class, 'status'])->name("review.likes.status");
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('user/settings', [SettingsController::class, 'settings'])->name('user.settings');
+
+    Route::middleware(['verified'])->group(function () {
+        Route::patch('user/settings', [SettingsController::class, 'update'])->name('user.settings.update');
+    });
+});
+
 
 /////
 
