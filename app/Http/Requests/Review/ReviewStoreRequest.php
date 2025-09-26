@@ -35,7 +35,7 @@ class ReviewStoreRequest extends FormRequest
             'rating' => 'required|integer|between:0,10',
             'text' => 'nullable|string|max:16384',
             'liked' => 'nullable|boolean',
-            'status' => 'nullable|in:planned,played,dropped,completed,shelved',
+            'status' => 'nullable|in:planned,played,dropped,completed,shelved,unplayed',
             'platform' => 'nullable|exists:platforms,name',
             'game_id' => 'required|exists:games,id',
             'user_id' => 'required|exists:users,id',
