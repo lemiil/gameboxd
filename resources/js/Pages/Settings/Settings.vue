@@ -14,7 +14,6 @@ let profileErrors = ref({});
 // Password form
 let currentPassword = ref('');
 let password = ref('');
-let passwordConfirmation = ref('');
 let passwordErrors = ref({});
 
 // Forgot password form
@@ -26,6 +25,7 @@ const sendForgotPassword = async () => {
     forgotSubmitting.value = true;
     try {
         await axios.post('/forgot-password', { email: user.email });
+        //todo add cute notif
         alert('Password reset link sent!');
     } catch (e) {
         console.error(e);
@@ -38,15 +38,14 @@ const updatePassword = async () => {
     passwordSubmitting.value = true;
     passwordErrors.value = {};
     try {
-        await axios.put('/user/password', {
+        await axios.put('/password', {
             current_password: currentPassword.value,
             password: password.value,
-            password_confirmation: passwordConfirmation.value
         });
-        alert('Password updated!');
+        //todo add cute notif
+        console.log('Password updated!');
         currentPassword.value = '';
         password.value = '';
-        passwordConfirmation.value = '';
     } catch (err) {
         if (err.response?.data?.errors) {
             passwordErrors.value = err.response.data.errors;
@@ -60,10 +59,11 @@ const updateProfile = async () => {
     profileSubmitting.value = true;
     profileErrors.value = {};
     try {
-        await axios.patch('/user/profile', {
+        await axios.patch('/profile', {
             name: name.value,
             email: email.value
         });
+        //todo add cute notif
         alert('Profile updated!');
     } catch (err) {
         if (err.response?.data?.errors) {
@@ -134,13 +134,6 @@ const updateProfile = async () => {
                     <input type="password" v-model="password" class="w-full p-2 rounded bg-gray-800 border border-gray-700 text-gray-200"
                            :class="{'border-red-500': passwordErrors.password}">
                     <p v-if="passwordErrors.password" class="text-red-500 text-sm">{{ passwordErrors.password[0] }}</p>
-                </div>
-
-                <div>
-                    <label class="block text-sm text-gray-300">Confirm New Password</label>
-                    <input type="password" v-model="passwordConfirmation" class="w-full p-2 rounded bg-gray-800 border border-gray-700 text-gray-200"
-                           :class="{'border-red-500': passwordErrors.password_confirmation}">
-                    <p v-if="passwordErrors.password_confirmation" class="text-red-500 text-sm">{{ passwordErrors.password_confirmation[0] }}</p>
                 </div>
 
                 <button type="submit" :disabled="passwordSubmitting" class="w-full py-2 bg-dark text-white rounded mt-2">
