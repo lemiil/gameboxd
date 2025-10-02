@@ -8,6 +8,7 @@ use Inertia\Inertia;
 
 class SettingsController extends Controller
 {
+
     public function settings(Request $request)
     {
         return Inertia::render('Settings/Settings', [

@@ -90,10 +90,9 @@ watch(searchQuery, (newValue) => {
         </header>
 
         <!-- main -->
-        <main v-if="page.component !== 'Game/GameShow'" class="flex-1 max-w-6xl mx-auto px-4 py-10">
+        <main>
             <slot />
         </main>
-        <slot v-else />
 
         <!-- footer -->
         <footer class="bg-gray-100 dark:bg-gray-800 py-6 mt-auto shadow-inner">

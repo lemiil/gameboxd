@@ -1,165 +1,66 @@
 <script setup>
-import { ref } from "vue";
-import axios from "axios";
-import {Head, usePage} from '@inertiajs/vue3';
 import MainLayout from "@/Layouts/MainLayout.vue";
+import Account from "@/Pages/Settings/Settings/Account.vue";
+import {ref} from "vue";
 
-const user = usePage().props.auth.user;
+const sections = ref([
+    {id: 'profile', name: 'Profile', description: 'Customize your avatar and profile', icon: '👤'},
+    {id: 'notifications', name: 'Notifications', description: 'Customize your notificationss', icon: '🔔'},
+    {id: 'account', name: 'Account', description: 'Update your email / password', icon: '🔒'},
+    {id: 'blocked', name: 'Blocked', description: 'Update your blocked things i dont fucking know what to write here', icon: '🚬'},
+]);
 
-// Profile form
-let name = ref(user.name);
-let email = ref(user.email);
-let profileErrors = ref({});
+const activeSection = ref('defaults');
 
-// Password form
-let currentPassword = ref('');
-let password = ref('');
-let passwordErrors = ref({});
-
-// Forgot password form
-const forgotSubmitting = ref(false);
-const passwordSubmitting = ref(false);
-const profileSubmitting = ref(false);
-
-const sendForgotPassword = async () => {
-    forgotSubmitting.value = true;
-    try {
-        await axios.post('/forgot-password', { email: user.email });
-        //todo add cute notif
-        alert('Password reset link sent!');
-    } catch (e) {
-        console.error(e);
-    } finally {
-        forgotSubmitting.value = false;
-    }
-};
-
-const updatePassword = async () => {
-    passwordSubmitting.value = true;
-    passwordErrors.value = {};
-    try {
-        await axios.put('/password', {
-            current_password: currentPassword.value,
-            password: password.value,
-        });
-        //todo add cute notif
-        console.log('Password updated!');
-        currentPassword.value = '';
-        password.value = '';
-    } catch (err) {
-        if (err.response?.data?.errors) {
-            passwordErrors.value = err.response.data.errors;
-        }
-    } finally {
-        passwordSubmitting.value = false;
-    }
-};
-
-const updateProfile = async () => {
-    profileSubmitting.value = true;
-    profileErrors.value = {};
-    try {
-        await axios.patch('/profile', {
-            name: name.value,
-            email: email.value
-        });
-        //todo add cute notif
-        alert('Profile updated!');
-    } catch (err) {
-        if (err.response?.data?.errors) {
-            profileErrors.value = err.response.data.errors;
-        }
-    } finally {
-        profileSubmitting.value = false;
-    }
+const selectSection = (id) => {
+    activeSection.value = id;
 };
 </script>
 
 <template>
     <MainLayout>
+        <div class="flex flex-col max-w-6xl mx-auto px-4 py-10">
+            <h1 class="text-2xl font-bold mb-6">Settings</h1>
 
-    <Head title="Settings" />
-    <div class="settings-container py-4 space-y-8">
+            <div class="flex min-h-[70vh] bg-gray-900 text-gray-200 rounded-lg overflow-hidden">
+                <!-- Sidebar -->
+                <aside class="w-64 bg-gray-800 border-r border-gray-700 p-4 flex flex-col">
+                    <ul class="space-y-2 flex-1">
+                        <li
+                            v-for="section in sections"
+                            :key="section.id"
+                            @click="selectSection(section.id)"
+                            :class="[
+                            'cursor-pointer px-3 py-2 rounded hover:bg-gray-700 flex flex-col transition-colors',
+                            activeSection === section.id ? 'bg-gray-700 font-semibold' : ''
+                        ]"
+                        >
+                        <span class="flex items-center space-x-2">
+                            <span>{{ section.icon }}</span>
+                            <span>{{ section.name }}</span>
+                        </span>
+                            <small class="text-gray-400 text-xs mt-0.5">{{ section.description }}</small>
+                        </li>
+                    </ul>
+                </aside>
 
-        <!-- Profile Information -->
-        <section>
-            <header>
-                <h2 class="text-lg text-dark">Profile Information</h2>
-                <p class="text-sm text-gray-400">Update your account's profile information and email address</p>
-            </header>
-
-            <form @submit.prevent="updateProfile" class="mt-4 space-y-3">
-                <div>
-                    <label class="block text-sm text-gray-300">Name</label>
-                    <input type="text" v-model="name" class="w-full p-2 rounded bg-gray-800 border border-gray-700 text-gray-200"
-                           :class="{'border-red-500': profileErrors.name}">
-                    <p v-if="profileErrors.name" class="text-red-500 text-sm">{{ profileErrors.name[0] }}</p>
-                </div>
-
-                <div>
-                    <label class="block text-sm text-gray-300">Email</label>
-                    <input type="email" v-model="email" class="w-full p-2 rounded bg-gray-800 border border-gray-700 text-gray-200"
-                           :class="{'border-red-500': profileErrors.email}">
-                    <p v-if="profileErrors.email" class="text-red-500 text-sm">{{ profileErrors.email[0] }}</p>
-                </div>
-
-                <div v-if="!user.email_verified_at" class="text-sm text-red-500">
-                    Your email address is not verified.
-                    <button @click.prevent="$inertia.post('/email/verification-notification')" class="text-blue-400 ml-1 underline">Resend Verification Email</button>
-                </div>
-
-                <button type="submit" :disabled="profileSubmitting" class="w-full py-2 bg-dark text-white rounded mt-2">
-                    {{ profileSubmitting ? 'Updating...' : 'Update Profile' }}
-                </button>
-            </form>
-        </section>
-
-        <!-- Update Password -->
-        <section>
-            <header>
-                <h2 class="text-lg text-dark">Update Password</h2>
-                <p class="text-sm text-gray-400">Ensure your account is using a long, random password to stay secure</p>
-            </header>
-
-            <form @submit.prevent="updatePassword" class="mt-4 space-y-3">
-                <div>
-                    <label class="block text-sm text-gray-300">Current Password</label>
-                    <input type="password" v-model="currentPassword" class="w-full p-2 rounded bg-gray-800 border border-gray-700 text-gray-200"
-                           :class="{'border-red-500': passwordErrors.current_password}">
-                    <p v-if="passwordErrors.current_password" class="text-red-500 text-sm">{{ passwordErrors.current_password[0] }}</p>
-                </div>
-
-                <div>
-                    <label class="block text-sm text-gray-300">New Password</label>
-                    <input type="password" v-model="password" class="w-full p-2 rounded bg-gray-800 border border-gray-700 text-gray-200"
-                           :class="{'border-red-500': passwordErrors.password}">
-                    <p v-if="passwordErrors.password" class="text-red-500 text-sm">{{ passwordErrors.password[0] }}</p>
-                </div>
-
-                <button type="submit" :disabled="passwordSubmitting" class="w-full py-2 bg-dark text-white rounded mt-2">
-                    {{ passwordSubmitting ? 'Updating...' : 'Update Password' }}
-                </button>
-            </form>
-        </section>
-
-        <!-- Forgot Password -->
-        <section>
-            <header>
-                <h2 class="text-lg text-dark">Forgot password?</h2>
-                <p class="text-sm text-gray-400">Don’t worry, we will help you</p>
-            </header>
-
-            <button @click="sendForgotPassword" :disabled="forgotSubmitting" class="mt-4 w-full py-2 bg-dark text-white rounded">
-                {{ forgotSubmitting ? 'Sending...' : 'Forgot Password' }}
-            </button>
-        </section>
-
-    </div>
+                <section class="flex-1 p-6 bg-gray-900">
+                    <div v-if="activeSection === 'profile'">
+                        <h2 class="text-xl font-bold mb-4">Profile Settings</h2>
+                        <p>Lorem ipsum dolor sit
+                            amet.</p>
+                    </div>
+                    <div v-else-if="activeSection === 'notifications'">
+                        <h2 class="text-xl font-bold mb-4">Notification Settings</h2>
+                        <p>Lorem ipsum dolor sit
+                            amet.</p>
+                    </div>
+                    <div v-else-if="activeSection === 'account'">
+                        <h2 class="text-xl font-bold mb-4">Account Settings</h2>
+                        <Account></Account>
+                    </div>
+                </section>
+            </div>
+        </div>
     </MainLayout>
 </template>
-
-<style scoped>
-.bg-dark {
-    background-color: #1f1f1f;
-}
-</style>

@@ -11,6 +11,7 @@ const props = defineProps({
     <Head title="Games" />
 
     <MainLayout>
+        <div class="flex-1 max-w-6xl mx-auto px-4 py-10">
         <h1 class="text-2xl font-bold mb-6">Games</h1>
 
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
@@ -52,6 +53,7 @@ const props = defineProps({
                 ]"
                 :disabled="!link.url"
             />
+        </div>
         </div>
     </MainLayout>
 </template>
