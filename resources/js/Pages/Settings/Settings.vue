@@ -1,16 +1,17 @@
 <script setup>
 import MainLayout from "@/Layouts/MainLayout.vue";
 import Account from "@/Pages/Settings/Settings/Account.vue";
+import UpdateAvatar from "@/Pages/Settings/Settings/UpdateAvatar.vue";
 import {ref} from "vue";
 
 const sections = ref([
     {id: 'profile', name: 'Profile', description: 'Customize your avatar and profile', icon: '👤'},
     {id: 'notifications', name: 'Notifications', description: 'Customize your notificationss', icon: '🔔'},
     {id: 'account', name: 'Account', description: 'Update your email / password', icon: '🔒'},
-    {id: 'blocked', name: 'Blocked', description: 'Update your blocked things i dont fucking know what to write here', icon: '🚬'},
+    {id: 'blocked', name: 'Blocked', description: 'Update your blocked', icon: '🚬'},
 ]);
 
-const activeSection = ref('defaults');
+const activeSection = ref('profile');
 
 const selectSection = (id) => {
     activeSection.value = id;
@@ -47,8 +48,7 @@ const selectSection = (id) => {
                 <section class="flex-1 p-6 bg-gray-900">
                     <div v-if="activeSection === 'profile'">
                         <h2 class="text-xl font-bold mb-4">Profile Settings</h2>
-                        <p>Lorem ipsum dolor sit
-                            amet.</p>
+                        <UpdateAvatar></UpdateAvatar>
                     </div>
                     <div v-else-if="activeSection === 'notifications'">
                         <h2 class="text-xl font-bold mb-4">Notification Settings</h2>
