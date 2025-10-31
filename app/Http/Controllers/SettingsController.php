@@ -16,6 +16,8 @@ class SettingsController extends Controller
         ]);
     }
 
+
+
     public function update(ProfileUpdateRequest $request)
     {
         $request->user()->fill($request->validated());

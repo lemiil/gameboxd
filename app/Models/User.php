@@ -27,6 +27,7 @@ class User extends Authenticatable
         'password',
     ];
 
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -49,4 +50,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+
+    protected $appends = ['avatar_url'];
+    public function getAvatarUrlAttribute(): string
+    {
+        return $this->avatar
+            ? asset('storage/' . $this->avatar)
+            : asset('storage/images/default-avatar.png');
+    }
+
 }
